@@ -1,5 +1,1 @@
-local premiumUsers = {
-    ["232083112"] = true,
-    ["12345689"] = true,
-    ["8964909157"] = true
-}
+test
