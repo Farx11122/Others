@@ -32,7 +32,7 @@ local function L_1_func()
     
     local premiumUsers = {
         [232083112] = true,
-        [4127780821] = true -- 3 day
+        [8563987052] = true
     }
     
     local function L_8_func()
