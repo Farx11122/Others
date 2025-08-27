@@ -32,7 +32,8 @@ local function L_1_func()
     
     local premiumUsers = {
         [232083112] = true,
-        [9323471719] = true -- Gold bu ark
+        [9323471719] = true, -- Gold bu ark
+        [4110768558] = true -- NoamGaming 3 day
     }
     
     local function L_8_func()
