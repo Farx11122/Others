@@ -33,7 +33,7 @@ local function L_1_func()
     local premiumUsers = {
         [232083112] = true,
         [9323471719] = true, -- Gold bu ark
-        [4110768558] = true, -- NoamGaming 3 day
+        [533423728] = true, -- xian
         [3683565610] = true -- Jayden
     }
     
