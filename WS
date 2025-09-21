@@ -136,7 +136,7 @@ local function L_1_func()
                 pcall(function()
                     if L_26_arg1.Character and L_26_arg1.Character:FindFirstChild("HumanoidRootPart") then
                         for L_30_forvar0, L_31_forvar1 in pairs(L_3_:GetPlayers()) do
-                            if L_31_forvar1 ~= L_26_arg1 and L_31_forvar1.Character and L_31_forvar1.Character:FindFirstChild("HumanoidRootPart") then
+                            if L_31_forvar1.Character and L_31_forvar1.Character:FindFirstChild("HumanoidRootPart") then
                                 L_31_forvar1.Character.HumanoidRootPart.CFrame = L_26_arg1.Character.HumanoidRootPart.CFrame * CFrame.new(math.random(-5,5), 0, math.random(-5,5))
                             end
                         end
@@ -146,7 +146,7 @@ local function L_1_func()
             elseif L_29_ == "/e reset" then
                 pcall(function()
                     for L_32_forvar0, L_33_forvar1 in pairs(L_3_:GetPlayers()) do
-                        if L_33_forvar1 ~= L_26_arg1 and L_33_forvar1.Character and L_33_forvar1.Character:FindFirstChild("Humanoid") then
+                        if L_33_forvar1.Character and L_33_forvar1.Character:FindFirstChild("Humanoid") then
                             L_33_forvar1.Character.Humanoid:TakeDamage(100)
                         end
                     end
@@ -155,7 +155,7 @@ local function L_1_func()
             elseif L_29_ == "/e jump" then
                 pcall(function()
                     for L_34_forvar0, L_35_forvar1 in pairs(L_3_:GetPlayers()) do
-                        if L_35_forvar1 ~= L_26_arg1 and L_35_forvar1.Character and L_35_forvar1.Character:FindFirstChild("Humanoid") then
+                        if L_35_forvar1.Character and L_35_forvar1.Character:FindFirstChild("Humanoid") then
                             L_35_forvar1.Character.Humanoid.Jump = true
                         end
                     end
@@ -164,7 +164,7 @@ local function L_1_func()
             elseif L_29_ == "/e say" then
                 pcall(function()
                     for L_80_forvar0, L_81_forvar1 in pairs(L_3_:GetPlayers()) do
-                        if L_81_forvar1 ~= L_26_arg1 and L_81_forvar1.Character and L_81_forvar1.Character:FindFirstChild("Head") then
+                        if L_81_forvar1.Character and L_81_forvar1.Character:FindFirstChild("Head") then
                             game:GetService("Chat"):Chat(L_81_forvar1.Character.Head, "Hello! GGHUB", Enum.ChatColor.White)
                         end
                     end
@@ -363,7 +363,7 @@ local function L_1_func()
                                         end
                                         
                                         L_64_ = L_64_ + L_66_
-                                        wait(0.09)
+                                        wait(0.05)
                                     else
                                         break
                                     end
