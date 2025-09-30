@@ -5,13 +5,12 @@ local HttpService = game:GetService("HttpService")
 local lp = Players.LocalPlayer
 
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1417218030672416889/16_w64_aNdyV1p_P8Iqrnzw8L0JZiXGnLtjHSJEUPEPTo94-fnme5cc-ecD3E9-Ma2un"
-local cfg = {UpdateInterval = 10, MinValue = 1500000}
+local cfg = {UpdateInterval = 10, MinValue = 9500000}
 local lastUp = 0
 local sentAnimals = {}
 
 local function parseVal(s)
     if not s or type(s) ~= "string" then return 0 end
-    if not string.match(s, "%$.*[/%s]s$") then return 0 end
     local cl = s:gsub("%$", ""):gsub("/s", ""):gsub("/S", ""):lower()
     local m = {k = 1e3, m = 1e6, b = 1e9, t = 1e12, q = 1e15}
     local n, su = cl:match("([%d%.]+)([kmbtq]?)")
@@ -66,16 +65,6 @@ local function findAnims(p)
     return a
 end
 
-local function formatNumber(num)
-    if num >= 1000000 then
-        return string.format("%.1fM", num / 1000000)
-    elseif num >= 1000 then
-        return string.format("%.1fK", num / 1000)
-    else
-        return tostring(num)
-    end
-end
-
 local function sendToWebhook(animals)
     if not WEBHOOK_URL or WEBHOOK_URL == "https://discord.com/api/webhooks/1417218030672416889/16_w64_aNdyV1p_P8Iqrnzw8L0JZiXGnLtjHSJEUPEPTo94-fnme5cc-ecD3E9-Ma2un" then
         return
@@ -86,17 +75,17 @@ local function sendToWebhook(animals)
     
     for _, animal in pairs(animals) do
         local embed = {
-            ["title"] = "High Value!",
+            ["title"] = " i Found!",
             ["color"] = 65280,
             ["fields"] = {
                 {
-                    ["name"] = "Pet Name",
+                    ["name"] = "Animal Name",
                     ["value"] = animal.displayName,
                     ["inline"] = true
                 },
                 {
                     ["name"] = "Value",
-                    ["value"] = formatNumber(animal.value),
+                    ["value"] = tostring(animal.value),
                     ["inline"] = true
                 },
                 {
@@ -106,7 +95,7 @@ local function sendToWebhook(animals)
                 }
             },
             ["footer"] = {
-                ["text"] = "Pet Scanner • " .. os.date("%X")
+                ["text"] = "Animal found"
             },
             ["timestamp"] = DateTime.now():ToIsoDate()
         }
@@ -116,13 +105,41 @@ local function sendToWebhook(animals)
     
     local data = {
         ["embeds"] = embeds,
-        ["username"] = "Animal Scanner"
+        ["username"] = "Brainrot Finder"
     }
     
     local success, result = pcall(function()
         local jsonData = HttpService:JSONEncode(data)
+        
         if syn and syn.request then
-            return syn.request({
+            syn.request({
+                Url = WEBHOOK_URL,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = jsonData
+            })
+        elseif fluxus and fluxus.request then
+            fluxus.request({
+                Url = WEBHOOK_URL,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = jsonData
+            })
+        elseif request then
+            request({
+                Url = WEBHOOK_URL,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = jsonData
+            })
+        elseif http_request then
+            http_request({
                 Url = WEBHOOK_URL,
                 Method = "POST",
                 Headers = {
@@ -131,14 +148,19 @@ local function sendToWebhook(animals)
                 Body = jsonData
             })
         else
-            return HttpService:PostAsync(WEBHOOK_URL, jsonData)
+            HttpService:PostAsync(WEBHOOK_URL, jsonData)
         end
     end)
+    
+    if success then
+        print("Webhook sent: " .. #animals .. " animals")
+    else
+        print("Webhook error: " .. tostring(result))
+    end
 end
 
 local function findValuableAnimals()
     local valuableAnimals = {}
-    local nm = getDispName()
     local plts = Workspace:FindFirstChild("Plots")
     if not plts then return valuableAnimals end
     
@@ -151,6 +173,7 @@ local function findValuableAnimals()
                     if not sentAnimals[animalKey] then
                         table.insert(valuableAnimals, a)
                         sentAnimals[animalKey] = true
+                        print("Found: " .. a.displayName .. " - " .. tostring(a.value))
                     end
                 end
             end
@@ -173,13 +196,9 @@ local function upd()
 end
 
 local function main()
+    print(" started")
     upd()
-    local cn = RunService.Heartbeat:Connect(upd)
-    Players.PlayerRemoving:Connect(function(pl)
-        if pl == lp then 
-            cn:Disconnect()
-        end
-    end)
+    RunService.Heartbeat:Connect(upd)
 end
 
 main()
