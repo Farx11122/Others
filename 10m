@@ -4,7 +4,7 @@ local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
 local lp = Players.LocalPlayer
 
-local WEBHOOK_URL = "https://discord.com/api/webhooks/your_webhook_url_here"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1417218030672416889/16_w64_aNdyV1p_P8Iqrnzw8L0JZiXGnLtjHSJEUPEPTo94-fnme5cc-ecD3E9-Ma2un"
 local cfg = {UpdateInterval = 10, MinValue = 1500000}
 local lastUp = 0
 local sentAnimals = {}
@@ -66,6 +66,16 @@ local function findAnims(p)
     return a
 end
 
+local function formatNumber(num)
+    if num >= 1000000 then
+        return string.format("%.1fM", num / 1000000)
+    elseif num >= 1000 then
+        return string.format("%.1fK", num / 1000)
+    else
+        return tostring(num)
+    end
+end
+
 local function sendToWebhook(animals)
     if not WEBHOOK_URL or WEBHOOK_URL == "https://discord.com/api/webhooks/1417218030672416889/16_w64_aNdyV1p_P8Iqrnzw8L0JZiXGnLtjHSJEUPEPTo94-fnme5cc-ecD3E9-Ma2un" then
         return
@@ -76,17 +86,17 @@ local function sendToWebhook(animals)
     
     for _, animal in pairs(animals) do
         local embed = {
-            ["title"] = "I FOUND SMT!",
+            ["title"] = "High Value!",
             ["color"] = 65280,
             ["fields"] = {
                 {
-                    ["name"] = "Brainrot Name",
+                    ["name"] = "Pet Name",
                     ["value"] = animal.displayName,
                     ["inline"] = true
                 },
                 {
                     ["name"] = "Value",
-                    ["value"] = string.format("%,d", animal.value),
+                    ["value"] = formatNumber(animal.value),
                     ["inline"] = true
                 },
                 {
@@ -96,7 +106,7 @@ local function sendToWebhook(animals)
                 }
             },
             ["footer"] = {
-                ["text"] = "Pet Finder • " .. os.date("%X")
+                ["text"] = "Pet Scanner • " .. os.date("%X")
             },
             ["timestamp"] = DateTime.now():ToIsoDate()
         }
@@ -106,7 +116,7 @@ local function sendToWebhook(animals)
     
     local data = {
         ["embeds"] = embeds,
-        ["username"] = "Pet Finder"
+        ["username"] = "Animal Scanner"
     }
     
     local success, result = pcall(function()
