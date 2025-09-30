@@ -4,8 +4,7 @@ local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
 local lp = Players.LocalPlayer
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1417218030672416889/16_w64_aNdyV1p_P8Iqrnzw8L0JZiXGnLtjHSJEUPEPTo94-fnme5cc-ecD3E9-Ma2un"
-
-local cfg = {UpdateInterval = 10, MinValue = 1500000}
+local cfg = {UpdateInterval = 10, MinValue = 9500000}
 local lastUp = 0
 local sentAnimals = {}
 
@@ -75,27 +74,27 @@ local function sendToWebhook(animals)
     
     for _, animal in pairs(animals) do
         local embed = {
-            ["title"] = "Valuable Animal Found!",
+            ["title"] = "Valuable Brainrot Found!",
             ["color"] = 65280,
             ["fields"] = {
                 {
-                    ["name"] = "Animal Name",
+                    ["name"] = "- Name",
                     ["value"] = animal.displayName,
                     ["inline"] = true
                 },
                 {
-                    ["name"] = "Value",
+                    ["name"] = "- Value",
                     ["value"] = animal.generation,
                     ["inline"] = true
                 },
                 {
-                    ["name"] = "Job ID",
+                    ["name"] = "- JobID",
                     ["value"] = jobId,
                     ["inline"] = false
                 }
             },
             ["footer"] = {
-                ["text"] = "Animal Scanner"
+                ["text"] = "Pet Finder | Backup"
             },
             ["timestamp"] = DateTime.now():ToIsoDate()
         }
@@ -105,13 +104,13 @@ local function sendToWebhook(animals)
     
     local payload = {
         ["embeds"] = embeds,
-        ["username"] = "Animal Finder"
+        ["username"] = "Pet Finder"
     }
     
     local success, result = pcall(function()
         local jsonData = HttpService:JSONEncode(payload)
         
-        -- Executor'a göre uygun HTTP request fonksiyonu
+        -- request
         if syn and syn.request then
             return syn.request({
                 Url = WEBHOOK_URL,
