@@ -3,13 +3,21 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
 local lp = Players.LocalPlayer
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1417218030672416889/16_w64_aNdyV1p_P8Iqrnzw8L0JZiXGnLtjHSJEUPEPTo94-fnme5cc-ecD3E9-Ma2un"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1422568397463490623/tFUsy_Wm3tCIKGC0JJPm_Vm84OsDXXrzIVTuQsmNCxkKG1Qn4ykYYJlbzy2Yf2MDLbvH"
 local cfg = {UpdateInterval = 10, MinValue = 9500000}
 local lastUp = 0
 local sentAnimals = {}
 
+local function isTimeFormat(s)
+    if not s or type(s) ~= "string" then return false end
+    -- Dakika/saniye formatını kontrol et (örn: "10m 16s", "22m 53s")
+    return s:match("%d+m%s*%d+s") ~= nil or s:match("%d+m") ~= nil or s:match("%d+s") ~= nil
+end
+
 local function parseVal(s)
     if not s or type(s) ~= "string" then return 0 end
+    if isTimeFormat(s) then return 0 end
+    
     local cl = s:gsub("%$", ""):gsub("/s", ""):gsub("/S", ""):lower()
     local m = {k = 1e3, m = 1e6, b = 1e9, t = 1e12, q = 1e15}
     local n, su = cl:match("([%d%.]+)([kmbtq]?)")
@@ -163,7 +171,7 @@ local function findValuableAnimals()
     local valuableAnimals = {}
     local plts = Workspace:FindFirstChild("Plots")
     if not plts then 
-        warn("Plots bulunamadı!")
+        warn("plot unfound")
         return valuableAnimals 
     end
     
