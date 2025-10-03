@@ -4,7 +4,7 @@ local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
 local lp = Players.LocalPlayer
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1422568397463490623/tFUsy_Wm3tCIKGC0JJPm_Vm84OsDXXrzIVTuQsmNCxkKG1Qn4ykYYJlbzy2Yf2MDLbvH"
-local cfg = {UpdateInterval = 10, MinValue = 9500000}
+local cfg = {UpdateInterval = 10, MinValue = 100000}
 local lastUp = 0
 local sentAnimals = {}
 
