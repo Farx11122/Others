@@ -96,9 +96,9 @@ local function sendToWebhook(animals)
                     ["inline"] = true
                 },
                 {
-                    ["name"] = "- JobID",
-                    ["value"] = jobId,
-                    ["inline"] = false
+["name"] = "- JobID",
+["value"] = "https://farukixd.github.io/JoinHub/?placeId=109983668079237&gameInstanceId=" .. jobId,
+["inline"] = false
                 }
             },
             ["footer"] = {
