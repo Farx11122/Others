@@ -84,7 +84,7 @@ local function sendToWebhook(animals)
     
     -- Private server kontrolü - webhook gönderme
     if isPrivateServer() then
-        print("🔒 Private server - Webhook gönderilmedi")
+        print("table")
         return
     end
     
