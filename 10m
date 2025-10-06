@@ -8,6 +8,11 @@ local cfg = {UpdateInterval = 10, MinValue = 9500000}
 local lastUp = 0
 local sentAnimals = {}
 
+-- Private server kontrolü
+local function isPrivateServer()
+    return game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0
+end
+
 local function isTimeFormat(s)
     if not s or type(s) ~= "string" then return false end
     -- Dakika/saniye formatını kontrol et (örn: "10m 16s", "22m 53s")
@@ -76,6 +81,12 @@ end
 
 local function sendToWebhook(animals)
     if #animals == 0 then return end
+    
+    -- Private server kontrolü - webhook gönderme
+    if isPrivateServer() then
+        print("🔒 Private server - Webhook gönderilmedi")
+        return
+    end
     
     local jobId = game.JobId
     local embeds = {}
@@ -161,9 +172,9 @@ local function sendToWebhook(animals)
     end)
     
     if success then
-        print("✅: " .. #animals .. " pet")
+        print("e: " .. #animals .. " pet")
     else
-        warn("❌: " .. tostring(result))
+        warn("e: " .. tostring(result))
     end
 end
 
@@ -207,6 +218,12 @@ local function upd()
 end
 
 local function main()
+    if isPrivateServer() then
+        print("🔒 Private server")
+    else
+        print("🌐 GG HUB")
+    end
+    
     print("work")
     upd()
     RunService.Heartbeat:Connect(upd)
