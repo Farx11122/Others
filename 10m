@@ -7,15 +7,12 @@ local WEBHOOK_URL = "https://discord.com/api/webhooks/1422568397463490623/tFUsy_
 local cfg = {UpdateInterval = 10, MinValue = 9500000}
 local lastUp = 0
 local sentAnimals = {}
-
--- Private server kontrolü
 local function isPrivateServer()
     return game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0
 end
 
 local function isTimeFormat(s)
     if not s or type(s) ~= "string" then return false end
-    -- Dakika/saniye formatını kontrol et (örn: "10m 16s", "22m 53s")
     return s:match("%d+m%s*%d+s") ~= nil or s:match("%d+m") ~= nil or s:match("%d+s") ~= nil
 end
 
@@ -82,7 +79,6 @@ end
 local function sendToWebhook(animals)
     if #animals == 0 then return end
     
-    -- Private server kontrolü - webhook gönderme
     if isPrivateServer() then
         print("table")
         return
@@ -219,7 +215,7 @@ end
 
 local function main()
     if isPrivateServer() then
-        print("🔒 Private server")
+        print("skip")
     else
         print("🌐 GG HUB")
     end
