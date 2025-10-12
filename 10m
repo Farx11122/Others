@@ -37,7 +37,7 @@ local function isMyPlot(p)
     if not s or not sg then return false end
     local s2, lb = pcall(function() return sg.SurfaceGui.Frame.TextLabel end)
     if not s2 or not lb then return false end
-    local t = lb.Text or ""
+    local t = lb.Text or lb.ContentText or ""
     local n = getDispName()
     return string.find(t:lower(), n:lower()) ~= nil
 end
@@ -56,16 +56,18 @@ local function findAnims(p)
                         local dp = oh and oh:FindFirstChild("DisplayName")
                         local gn = oh and oh:FindFirstChild("Generation")
                         if dp and gn then
+                            local dpTxt = dp.Text or dp.ContentText or ""
+                            local gnTxt = gn.Text or gn.ContentText or ""
                             return {
-                                displayName = dp.Text, 
-                                generation = gn.Text, 
+                                displayName = dpTxt, 
+                                generation = gnTxt, 
                                 position = sp.Position, 
                                 object = sp,
-                                value = parseVal(gn.Text)
+                                value = parseVal(gnTxt)
                             }
                         end
                     end)
-                    if s and d then table.insert(a, d) end
+                    if s and d and d.displayName ~= "" then table.insert(a, d) end
                 end
             else 
                 srch(c) 
@@ -125,7 +127,6 @@ local function sendToWebhook(animals)
     local success, result = pcall(function()
         local jsonData = HttpService:JSONEncode(payload)
         
-        -- request
         if syn and syn.request then
             return syn.request({
                 Url = WEBHOOK_URL,
@@ -217,7 +218,7 @@ local function main()
     if isPrivateServer() then
         print("skip")
     else
-        print("🌐 GG HUB")
+        print("ðŸŒ GG HUB")
     end
     
     print("work")
