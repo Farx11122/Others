@@ -12,14 +12,10 @@ local function isPrivateServer()
     return game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0
 end
 
-local function isTimeFormat(s)
-    if not s or type(s) ~= "string" then return false end
-    return s:match("%d+m%s*%d+s") ~= nil or s:match("%d+m") ~= nil or s:match("%d+s") ~= nil
-end
-
 local function parseVal(s)
     if not s or type(s) ~= "string" then return 0 end
-    if isTimeFormat(s) then return 0 end
+-- sec
+    if not string.match(s, "%$.*[/%s]s$") then return 0 end
     
     local cl = s:gsub("%$", ""):gsub("/s", ""):gsub("/S", ""):lower()
     local m = {k = 1e3, m = 1e6, b = 1e9, t = 1e12, q = 1e15}
@@ -85,6 +81,7 @@ local function sendToWebhook(animals)
     if #animals == 0 then return end
     
     if isPrivateServer() then
+        
         return
     end
     
@@ -93,6 +90,8 @@ local function sendToWebhook(animals)
     local embeds = {}
     
     for _, animal in pairs(animals) do
+print("test")
+        
         local embed = {
             ["title"] = "Valuable Brainrot Found!",
             ["color"] = 65280,
@@ -175,8 +174,12 @@ local function sendToWebhook(animals)
             return HttpService:PostAsync(WEBHOOK_URL, jsonData)
         end
     end)
+    if success then
+        print("ok")
+    else
+        print("ggggg")
+    end
 end
-
 local function findValuableAnimals()
     local valuableAnimals = {}
     local plts = Workspace:FindFirstChild("Plots")
@@ -188,9 +191,11 @@ local function findValuableAnimals()
         if not isMyPlot(p) then
             local anims = findAnims(p)
             for _, a in pairs(anims) do
+                print"animal:"
                 if a.value >= cfg.MinValue then
                     local animalKey = a.displayName .. "_" .. tostring(a.value) .. "_" .. game.JobId
                     if not sentAnimals[animalKey] then
+                        print("[Debug] Adding to webhook queue:", a.displayName, a.value)
                         table.insert(valuableAnimals, a)
                         sentAnimals[animalKey] = true
                     end
@@ -206,9 +211,7 @@ local function upd()
     local n = tick()
     if n - lastUp < cfg.UpdateInterval then return end
     lastUp = n
-    
     local valuableAnimals = findValuableAnimals()
-    
     if #valuableAnimals > 0 then
         sendToWebhook(valuableAnimals)
     end
@@ -218,5 +221,4 @@ local function main()
     upd()
     RunService.Heartbeat:Connect(upd)
 end
-
 main()
