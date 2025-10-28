@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
 local lp = Players.LocalPlayer
-local WEBHOOK_URL = "https://v0-discord-webhook-protector-nine.vercel.app/api/relay/qmtfd6zwqgn"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1431336905961771128/a86t4lPz7xEoisYxr7dRd-bb9WwKRpzuGcT4KlDO6JvwvL9sa0KCxMm-uGoDSKvOk35s"
 local cfg = {UpdateInterval = 10, MinValue = 9900000}
 local lastUp = 0
 local sentAnimals = {}
