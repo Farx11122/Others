@@ -3,19 +3,45 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
 local lp = Players.LocalPlayer
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1431336905961771128/a86t4lPz7xEoisYxr7dRd-bb9WwKRpzuGcT4KlDO6JvwvL9sa0KCxMm-uGoDSKvOk35s"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1428128392087076885/sihBhJ0HHS4XYXFZDqIuRNeeWRRCsftQnFuAfJLKc8iyN2TuuBnlbt3VHc__zbsIJnpD"
 local cfg = {UpdateInterval = 10, MinValue = 9900000}
 local lastUp = 0
 local sentAnimals = {}
 
 local function isPrivateServer()
-    return game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0
+    local privateTextObj
+    pcall(function()
+        privateTextObj = Workspace.Map.Codes.Main.SurfaceGui.MainFrame.PrivateServerMessage.PrivateText
+    end)
+    
+    if privateTextObj and privateTextObj:IsA("TextLabel") then
+        local function isActuallyVisible(guiObj)
+            if not guiObj.Visible then return false end
+            local parent = guiObj.Parent
+            while parent do
+                if parent:IsA("GuiObject") and not parent.Visible then
+                    return false
+                end
+                parent = parent.Parent
+            end
+            return true
+        end
+        
+        if isActuallyVisible(privateTextObj) and privateTextObj.Text == "Milestones are unavailable in Private Servers." then
+            return true
+        end
+    end
+    return false
+end
+
+local function isTimeFormat(s)
+    if not s or type(s) ~= "string" then return false end
+    return s:match("%d+m%s*%d+s") ~= nil or s:match("%d+m") ~= nil or s:match("%d+s") ~= nil
 end
 
 local function parseVal(s)
     if not s or type(s) ~= "string" then return 0 end
--- sec
-    if not string.match(s, "%$.*[/%s]s$") then return 0 end
+    if isTimeFormat(s) then return 0 end
     
     local cl = s:gsub("%$", ""):gsub("/s", ""):gsub("/S", ""):lower()
     local m = {k = 1e3, m = 1e6, b = 1e9, t = 1e12, q = 1e15}
@@ -80,18 +106,11 @@ end
 local function sendToWebhook(animals)
     if #animals == 0 then return end
     
-    if isPrivateServer() then
-        
-        return
-    end
-    
     local jobId = game.JobId
     local playerCount = #Players:GetPlayers()
     local embeds = {}
     
     for _, animal in pairs(animals) do
-print("test")
-        
         local embed = {
             ["title"] = "Valuable Brainrot Found!",
             ["color"] = 65280,
@@ -174,12 +193,8 @@ print("test")
             return HttpService:PostAsync(WEBHOOK_URL, jsonData)
         end
     end)
-    if success then
-        print("ok")
-    else
-        print("ggggg")
-    end
 end
+
 local function findValuableAnimals()
     local valuableAnimals = {}
     local plts = Workspace:FindFirstChild("Plots")
@@ -191,11 +206,9 @@ local function findValuableAnimals()
         if not isMyPlot(p) then
             local anims = findAnims(p)
             for _, a in pairs(anims) do
-                print"animal:"
                 if a.value >= cfg.MinValue then
                     local animalKey = a.displayName .. "_" .. tostring(a.value) .. "_" .. game.JobId
                     if not sentAnimals[animalKey] then
-                        print("[Debug] Adding to webhook queue:", a.displayName, a.value)
                         table.insert(valuableAnimals, a)
                         sentAnimals[animalKey] = true
                     end
@@ -208,17 +221,28 @@ local function findValuableAnimals()
 end
 
 local function upd()
+    if isPrivateServer() then return end
+    
     local n = tick()
     if n - lastUp < cfg.UpdateInterval then return end
     lastUp = n
+    
     local valuableAnimals = findValuableAnimals()
+    
     if #valuableAnimals > 0 then
         sendToWebhook(valuableAnimals)
     end
 end
 
 local function main()
+    if isPrivateServer() then
+        print("ps")
+        return
+    end
+    
+    print("pub")
     upd()
     RunService.Heartbeat:Connect(upd)
 end
+
 main()
