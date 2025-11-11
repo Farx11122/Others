@@ -1,0 +1,81 @@
+local uis = game:GetService("UserInputService")
+local rs = game:GetService("RunService")
+local p = game.Players.LocalPlayer
+local c = p.Character or p.CharacterAdded:Wait()
+local r = c:WaitForChild("HumanoidRootPart")
+
+local d = 30
+local active = false
+
+local gui = Instance.new("ScreenGui")
+gui.Parent = p:WaitForChild("PlayerGui")
+gui.ResetOnSpawn = false
+
+local f = Instance.new("Frame")
+f.Size = UDim2.new(0, 150, 0, 100)
+f.Position = UDim2.new(1, -160, 0, 10)
+f.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+f.BorderSizePixel = 0
+f.Parent = gui
+
+local tog = Instance.new("TextButton")
+tog.Size = UDim2.new(1, 0, 0.5, 0)
+tog.Text = "rapidFire"
+tog.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+tog.TextColor3 = Color3.fromRGB(255, 255, 255)
+tog.Parent = f
+
+local btn = Instance.new("TextButton")
+btn.Size = UDim2.new(1, 0, 0.5, 0)
+btn.Position = UDim2.new(0, 0, 0.5, 0)
+btn.Text = "fireOnce"
+btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+btn.Parent = f
+
+local function g()
+	local b, m = nil, d
+	for _, o in workspace:GetDescendants() do
+		if o:IsA("ProximityPrompt") and o.Enabled then
+			local a = o.Parent
+			if a and a:IsA("Attachment") then
+				local dist = (r.Position - a.WorldPosition).Magnitude
+				if dist < m then
+					m = dist
+					b = o
+				end
+			end
+		end
+	end
+	return b
+end
+
+local function t(pr)
+	pr.HoldDuration = 0
+	pr.MaxActivationDistance = math.huge
+	pr.RequiresLineOfSight = false
+	pr.KeyboardKeyCode = Enum.KeyCode.Unknown
+	pr.GamepadKeyCode = Enum.KeyCode.Unknown
+	fireproximityprompt(pr, 0, false)
+end
+
+tog.MouseButton1Click:Connect(function()
+	active = not active
+	tog.Text = "rapidFire: " .. (active and "On" or "Off")
+end)
+
+btn.MouseButton1Click:Connect(function()
+	local pr = g()
+	if pr then
+		t(pr)
+	end
+end)
+
+rs.Heartbeat:Connect(function()
+	if active then
+		local pr = g()
+		if pr then
+			t(pr)
+		end
+	end
+end)
