@@ -1,3 +1,4 @@
+-- We love having freaky sons of bitches as our fans lmao 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
