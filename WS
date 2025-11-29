@@ -1,13 +1,12 @@
 -- We love having freaky sons of bitches as our fans lmao 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
-
 local webhook = "https://v0-discord-webhook-protector-nine.vercel.app/api/relay/fkdd8pfijpm"
 local request = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-
 local player = Players.LocalPlayer
 local jobId = game.JobId
 local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local executor = identifyexecutor and identifyexecutor() or "Unknown Executor"
 
 local embed = {
     embeds = {
@@ -28,6 +27,11 @@ local embed = {
                     name = "Job ID",
                     value = jobId,
                     inline = true
+                },
+                {
+                    name = "Executor",
+                    value = executor,
+                    inline = true
                 }
             },
             color = 0x3498db,
@@ -35,7 +39,6 @@ local embed = {
         }
     }
 }
-
 request({
     Url = webhook,
     Method = "POST",
