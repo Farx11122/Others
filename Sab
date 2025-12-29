@@ -1,3 +1,1 @@
-loadstring(game:HttpGet("https://pandadevelopment.net/virtual/file/b61b3344fea09e02"))()
-
--- Dont tryna skid me just ask for it twin
+loadstring(game:HttpGet("https://api.junkie-development.de/api/v1/luascripts/public/6cede33a008598713d42b0701205ff1169aceb6cee379e40d43588052533bf2d/download"))()
